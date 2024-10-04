@@ -1,0 +1,82 @@
+Docker 사용하기
+Docker 런타임 환경 설치하기 (windows 10 Ver.)
+참고 문서 (https://docs.microsoft.com/ko-kr/windows/wsl/install-win10#step-4---download-the-linux-kernel-update-package)
+
+WSL2 실행을 위한 시스템 요구사항 확인 WSL 2로 업데이트하려면 Windows 10을 실행해야 합니다.
+
+x64 시스템의 경우: 버전 1903 이상, 빌드 18362 이상
+
+ARM64 시스템의 경우: 버전 2004 이상, 빌드 19041 이상 1- 8362보다 낮은 빌드는 WSL 2를 지원하지 않습니다. Windows Update Assistant를 사용하여 Windows 버전을 업데이트합니다.
+
+버전 및 빌드 번호를 확인하려면 Windows 로고 키 + R 을 선택하고, winver 를 입력하고, 확인 을 선택합니다. [설정] 메뉴에서 최신 Windows 버전으로 업데이트합니다.
+
+Windows 10 버전 1903 또는 1909를 실행하고 있는 경우 Windows 메뉴에서 "설정"을 열고, "업데이트 및 보안"으로 이동한 다음, "업데이트 확인"을 선택합니다. 빌드 번호는 18362.1049 이상 또는 18363.1049 이상이고, 
+부 빌드 번호는 .1049 이상이어야 합니다. 자세한 정보: WSL 2 지원이 Windows 10 버전 1903 및 1909에 제공됨. 문제 해결 지침을 참조하세요.
+
+1.Windows Terinal 설치하기
+Docker의 런타임 시스템은 리눅스 커널을 사용하기 때문에, 윈도우에서 제공하는 리눅스 커널을 사용할 수 있어야 한다.
+윈도우에서는 WSL2(Windows Subsystem for Linux 2) 이라는 경량 가상화 리눅스를 제공한다.
+윈도우 10은 2020년 5월 업데이트 이후 윈도우 버전에서 사용가능
+Microsoft Store에서 Terminal을 검색한 후, Terninal 설치
+2.윈도우 터미널을 관리자 권한으로 실행
+
+Linux용 Windows 하위 시스템 사용 (배포 이미지 서비스 및 관리도구 활성화)
+Windows에서 Linux 배포를 설치하려면 먼저 "Linux용 Windows 하위 시스템" 옵션 기능을 사용하도록 설정합니다.
+
+terminal을 관리자 권한으로 열어 실행합니다.
+
+윈도우 터미널에서 다음 두개의 명령어를 차례대로 실행
+
+> dism.exe /online /enable-feature /featurename:Microsoft-Windows-Subsystem-Linux /all /norestart
+> dism.exe /online /enable-feature /featurename:VirtualMachinePlatform /all /norestart
+  
+Linux 커널 업데이트 패키지 다운로드
+최신 패키지를 다운로드합니다.
+
+x64 머신용 최신 WSL2 Linux 커널 업데이트 패키지
+
+[WSL Update x64.msi](https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_x64.msi)
+
+ARM64 머신을 사용하는 경우 ARM64 패키지를 대신 다운로드하세요
+[WSL Update ARM64.msi](https://wslstorestorage.blob.core.windows.net/wslblob/wsl_update_arm64.msi)
+
+WSL 에서 사용하는 Linux 배포판 설치
+Microsoft store 에서 리눅스(Ubuntu) 배포판 설치
+
+스토어에서 ubuntu 검색 후 ubuntu 배포판 설치
+
+
+새로 설치된 Linux 배포를 처음 시작하면 콘솔 창이 열리고 파일이 압축 해제되어 PC에 저장될 때까지 1~2분 정도 기다려야 합니다. 이후의 모든 시작은 1초도 걸리지 않습니다.
+
+새 Linux 배포를 위한 사용자 계정 및 암호를 만들어야 합니다.
+
+배포 버전을 WSL 2로 설정
+
+wsl --set-version Ubuntu 2
+wsl --set-default-version 2
+
+WSL2 에서 Ubuntu 시작하기
+
+Docker 설치
+Docker Desktop for Windows - Docker Hub 에서 도커 데스크탑 설치
+아래에 링크에서 Docker Desktop for Windows 를 다운 받아 설치합니다.
+https://hub.docker.com/editions/community/docker-ce-desktop-windows
+
+Ununtu를 통한 docker 명령어 수행
+Nginx 컨테이너 실행하기
+docker pull 로 docker.hub 에서의 이미지를 당겨와 받고 수행할 수 있음
+docker pull nginx
+docker run 명령어를 사용하여 이미지를 당겨와 바로 수행할 수 있음
+docker run -d -p 8080:80 --name my-nginx nginx
+docker ps 명령어를 이용하여 수행중인 docker 컨테이너 목록을 조회해 봄
+docker ps
+docker exec -it my-nginx 를 사용하여 수행중인 컨테이너 안으로 들어갈 수 있음
+docker exec -it my-nginx /bin/bash
+docker images 명령어를 사용해 시스템에서 다운받은 docker image 리스트를 조회해 볼 수 있음
+docker images
+docker stop을 이용해 수행중인 컨테이너를 종료 시킬 수 있음
+
+docker stop my-nginx
+docker rmi 를 이용해 도커 이미지를 시스템에서 삭제할 수 있음
+
+docker rmi nginx
